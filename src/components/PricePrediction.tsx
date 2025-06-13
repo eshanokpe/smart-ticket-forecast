@@ -95,7 +95,7 @@ const PricePrediction = ({ basePrice, busData, searchData, onPriceCalculated }: 
   }, [basePrice, busData, searchData, onPriceCalculated]);
 
   const priceDifference = predictedPrice - basePrice;
-  const percentageChange = ((priceDifference / basePrice) * 100).toFixed(1);
+  const percentageChange = parseFloat(((priceDifference / basePrice) * 100).toFixed(1));
 
   return (
     <div className="text-center">
