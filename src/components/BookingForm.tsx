@@ -33,6 +33,28 @@ const BookingForm = ({ bus, seats, searchData, predictedPrice }: BookingFormProp
     phone: ""
   });
 
+  // Lagos State cities for display
+  const lagosStateCities = [
+    { value: "ikeja", label: "Ikeja" },
+    { value: "lagos-island", label: "Lagos Island" },
+    { value: "victoria-island", label: "Victoria Island" },
+    { value: "ikoyi", label: "Ikoyi" },
+    { value: "surulere", label: "Surulere" },
+    { value: "yaba", label: "Yaba" },
+    { value: "mushin", label: "Mushin" },
+    { value: "alaba", label: "Alaba" },
+    { value: "ajah", label: "Ajah" },
+    { value: "lekki", label: "Lekki" },
+    { value: "epe", label: "Epe" },
+    { value: "badagry", label: "Badagry" },
+    { value: "ikorodu", label: "Ikorodu" },
+    { value: "agege", label: "Agege" },
+    { value: "oshodi", label: "Oshodi" },
+    { value: "festac", label: "Festac Town" },
+    { value: "maryland", label: "Maryland" },
+    { value: "gbagada", label: "Gbagada" }
+  ];
+
   const handlePassengerChange = (index: number, field: string, value: string) => {
     const updatedPassengers = [...passengers];
     updatedPassengers[index] = { ...updatedPassengers[index], [field]: value };
@@ -40,8 +62,8 @@ const BookingForm = ({ bus, seats, searchData, predictedPrice }: BookingFormProp
   };
 
   const totalPrice = predictedPrice * seats.length;
-  const taxes = Math.round(totalPrice * 0.05);
-  const convenience = 50;
+  const taxes = Math.round(totalPrice * 0.075); // 7.5% VAT in Nigeria
+  const convenience = 100; // ₦100 convenience fee
   const finalAmount = totalPrice + taxes + convenience;
 
   const isFormValid = () => {
@@ -62,7 +84,7 @@ const BookingForm = ({ bus, seats, searchData, predictedPrice }: BookingFormProp
     
     toast({
       title: "Booking Confirmed!",
-      description: `Your tickets have been booked successfully. Booking ID: #BK${Date.now()}`,
+      description: `Your Lagos bus tickets have been booked successfully. Booking ID: #LG${Date.now()}`,
     });
   };
 
@@ -72,38 +94,40 @@ const BookingForm = ({ bus, seats, searchData, predictedPrice }: BookingFormProp
         <CardContent className="p-8 text-center">
           <CheckCircle className="h-16 w-16 text-green-400 mx-auto mb-4" />
           <h2 className="text-2xl font-bold text-white mb-2">Booking Confirmed!</h2>
-          <p className="text-blue-100 mb-6">
+          <p className="text-green-100 mb-6">
             Your ticket has been sent to {contactInfo.email}
           </p>
           
           <div className="bg-white/5 p-4 rounded-lg mb-6">
             <div className="text-left space-y-2">
               <div className="flex justify-between">
-                <span className="text-blue-100">Booking ID:</span>
-                <span className="text-white font-mono">#BK{Date.now()}</span>
+                <span className="text-green-100">Booking ID:</span>
+                <span className="text-white font-mono">#LG{Date.now()}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-blue-100">Route:</span>
-                <span className="text-white">{searchData.from} → {searchData.to}</span>
+                <span className="text-green-100">Route:</span>
+                <span className="text-white">
+                  {lagosStateCities.find(c => c.value === searchData.from)?.label} → {lagosStateCities.find(c => c.value === searchData.to)?.label}
+                </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-blue-100">Date:</span>
+                <span className="text-green-100">Date:</span>
                 <span className="text-white">{new Date(searchData.date).toLocaleDateString()}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-blue-100">Seats:</span>
+                <span className="text-green-100">Seats:</span>
                 <span className="text-white">{seats.join(", ")}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-blue-100">Total Amount:</span>
-                <span className="text-white font-semibold">₹{finalAmount}</span>
+                <span className="text-green-100">Total Amount:</span>
+                <span className="text-white font-semibold">₦{finalAmount.toLocaleString()}</span>
               </div>
             </div>
           </div>
           
           <Button 
             onClick={() => window.location.reload()}
-            className="bg-white text-blue-900 hover:bg-blue-50"
+            className="bg-white text-green-900 hover:bg-green-50"
           >
             Book Another Ticket
           </Button>
@@ -130,13 +154,13 @@ const BookingForm = ({ bus, seats, searchData, predictedPrice }: BookingFormProp
                 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
-                    <Label htmlFor={`name-${index}`} className="text-white">Name</Label>
+                    <Label htmlFor={`name-${index}`} className="text-white">Full Name</Label>
                     <Input
                       id={`name-${index}`}
                       value={passenger.name}
                       onChange={(e) => handlePassengerChange(index, "name", e.target.value)}
                       className="bg-white/10 border-white/20 text-white"
-                      placeholder="Full Name"
+                      placeholder="Enter full name"
                     />
                   </div>
                   
@@ -181,7 +205,7 @@ const BookingForm = ({ bus, seats, searchData, predictedPrice }: BookingFormProp
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="email" className="text-white">Email</Label>
+                  <Label htmlFor="email" className="text-white">Email Address</Label>
                   <Input
                     id="email"
                     type="email"
@@ -193,14 +217,14 @@ const BookingForm = ({ bus, seats, searchData, predictedPrice }: BookingFormProp
                 </div>
                 
                 <div>
-                  <Label htmlFor="phone" className="text-white">Phone</Label>
+                  <Label htmlFor="phone" className="text-white">Phone Number</Label>
                   <Input
                     id="phone"
                     type="tel"
                     value={contactInfo.phone}
                     onChange={(e) => setContactInfo({...contactInfo, phone: e.target.value})}
                     className="bg-white/10 border-white/20 text-white"
-                    placeholder="+91 9876543210"
+                    placeholder="+234 8012345678"
                   />
                 </div>
               </div>
@@ -218,27 +242,29 @@ const BookingForm = ({ bus, seats, searchData, predictedPrice }: BookingFormProp
           <CardContent className="space-y-4">
             <div className="space-y-3">
               <div className="flex justify-between">
-                <span className="text-blue-100">Operator:</span>
+                <span className="text-green-100">Operator:</span>
                 <span className="text-white font-medium">{bus.operator}</span>
               </div>
               
               <div className="flex justify-between">
-                <span className="text-blue-100">Route:</span>
-                <span className="text-white">{searchData.from} → {searchData.to}</span>
+                <span className="text-green-100">Route:</span>
+                <span className="text-white">
+                  {lagosStateCities.find(c => c.value === searchData.from)?.label} → {lagosStateCities.find(c => c.value === searchData.to)?.label}
+                </span>
               </div>
               
               <div className="flex justify-between">
-                <span className="text-blue-100">Date:</span>
+                <span className="text-green-100">Date:</span>
                 <span className="text-white">{new Date(searchData.date).toLocaleDateString()}</span>
               </div>
               
               <div className="flex justify-between">
-                <span className="text-blue-100">Time:</span>
+                <span className="text-green-100">Time:</span>
                 <span className="text-white">{bus.departure} - {bus.arrival}</span>
               </div>
               
               <div className="flex justify-between">
-                <span className="text-blue-100">Seats:</span>
+                <span className="text-green-100">Seats:</span>
                 <div className="flex flex-wrap gap-1">
                   {seats.map((seat) => (
                     <Badge key={seat} className="bg-green-500 text-white text-xs">
@@ -253,18 +279,18 @@ const BookingForm = ({ bus, seats, searchData, predictedPrice }: BookingFormProp
             
             <div className="space-y-2">
               <div className="flex justify-between">
-                <span className="text-blue-100">Base Fare ({seats.length} × ₹{predictedPrice}):</span>
-                <span className="text-white">₹{totalPrice}</span>
+                <span className="text-green-100">Base Fare ({seats.length} × ₦{predictedPrice.toLocaleString()}):</span>
+                <span className="text-white">₦{totalPrice.toLocaleString()}</span>
               </div>
               
               <div className="flex justify-between">
-                <span className="text-blue-100">Taxes & Fees:</span>
-                <span className="text-white">₹{taxes}</span>
+                <span className="text-green-100">VAT (7.5%):</span>
+                <span className="text-white">₦{taxes.toLocaleString()}</span>
               </div>
               
               <div className="flex justify-between">
-                <span className="text-blue-100">Convenience Fee:</span>
-                <span className="text-white">₹{convenience}</span>
+                <span className="text-green-100">Service Fee:</span>
+                <span className="text-white">₦{convenience.toLocaleString()}</span>
               </div>
             </div>
             
@@ -272,20 +298,20 @@ const BookingForm = ({ bus, seats, searchData, predictedPrice }: BookingFormProp
             
             <div className="flex justify-between text-lg font-bold">
               <span className="text-white">Total Amount:</span>
-              <span className="text-white">₹{finalAmount}</span>
+              <span className="text-white">₦{finalAmount.toLocaleString()}</span>
             </div>
             
             <Button 
               onClick={handleBooking}
               disabled={!isFormValid() || isBooking}
-              className="w-full bg-white text-blue-900 hover:bg-blue-50 py-6 text-lg"
+              className="w-full bg-white text-green-900 hover:bg-green-50 py-6 text-lg"
             >
               <CreditCard className="mr-2 h-5 w-5" />
-              {isBooking ? "Processing..." : `Pay ₹${finalAmount}`}
+              {isBooking ? "Processing..." : `Pay ₦${finalAmount.toLocaleString()}`}
             </Button>
             
-            <p className="text-xs text-blue-200 text-center">
-              Secure payment powered by 256-bit SSL encryption
+            <p className="text-xs text-green-200 text-center">
+              Secure payment with bank transfer, card, or mobile money
             </p>
           </CardContent>
         </Card>

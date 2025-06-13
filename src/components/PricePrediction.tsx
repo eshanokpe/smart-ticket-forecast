@@ -12,77 +12,87 @@ interface PricePredictionProps {
 
 const PricePrediction = ({ basePrice, busData, searchData, onPriceCalculated }: PricePredictionProps) => {
   const [predictedPrice, setPredictedPrice] = useState(basePrice);
-  const [priceFactors, setPriceFactors] = useState([]);
+  const [priceFactors, setPriceFactors] = useState<any[]>([]);
 
   useEffect(() => {
     const calculatePrice = () => {
       let finalPrice = basePrice;
-      const factors = [];
+      const factors: any[] = [];
       
-      // Decision Tree Algorithm Implementation
+      // Decision Tree Algorithm Implementation for Lagos Traffic & Transport
       
-      // Factor 1: Time of Travel
+      // Factor 1: Time of Travel (Lagos Traffic Patterns)
       const hour = parseInt(busData.departure.split(':')[0]);
       if (hour >= 6 && hour <= 10) {
-        // Morning peak
-        finalPrice *= 1.15;
-        factors.push({ name: "Morning Peak", change: "+15%", type: "increase" });
-      } else if (hour >= 18 && hour <= 22) {
-        // Evening peak
-        finalPrice *= 1.10;
-        factors.push({ name: "Evening Peak", change: "+10%", type: "increase" });
+        // Morning rush hour - Lagos heavy traffic
+        finalPrice *= 1.25;
+        factors.push({ name: "Morning Rush", change: "+25%", type: "increase" });
+      } else if (hour >= 16 && hour <= 20) {
+        // Evening rush hour - Lagos heavy traffic
+        finalPrice *= 1.20;
+        factors.push({ name: "Evening Rush", change: "+20%", type: "increase" });
       } else if (hour >= 22 || hour <= 5) {
-        // Night travel discount
-        finalPrice *= 0.95;
-        factors.push({ name: "Night Travel", change: "-5%", type: "decrease" });
+        // Night travel - less traffic but safety premium
+        finalPrice *= 1.05;
+        factors.push({ name: "Night Service", change: "+5%", type: "increase" });
       }
       
-      // Factor 2: Availability (Scarcity Pricing)
+      // Factor 2: Availability (Lagos High Demand Routes)
       if (busData.seatsAvailable <= 5) {
-        finalPrice *= 1.20;
-        factors.push({ name: "High Demand", change: "+20%", type: "increase" });
+        finalPrice *= 1.30;
+        factors.push({ name: "Very High Demand", change: "+30%", type: "increase" });
       } else if (busData.seatsAvailable <= 10) {
-        finalPrice *= 1.10;
-        factors.push({ name: "Limited Seats", change: "+10%", type: "increase" });
+        finalPrice *= 1.15;
+        factors.push({ name: "High Demand", change: "+15%", type: "increase" });
       } else if (busData.seatsAvailable >= 20) {
         finalPrice *= 0.90;
         factors.push({ name: "Good Availability", change: "-10%", type: "decrease" });
       }
       
-      // Factor 3: Bus Type Premium
-      if (busData.type.includes("Sleeper")) {
+      // Factor 3: Bus Type Premium (Lagos Transport Classes)
+      if (busData.type.includes("Executive")) {
+        finalPrice *= 1.15;
+        factors.push({ name: "Executive Class", change: "+15%", type: "increase" });
+      } else if (busData.type.includes("Premium")) {
         finalPrice *= 1.08;
-        factors.push({ name: "Sleeper Premium", change: "+8%", type: "increase" });
+        factors.push({ name: "Premium Service", change: "+8%", type: "increase" });
       }
       
-      // Factor 4: Day of Week
+      // Factor 4: Day of Week (Lagos Weekend Patterns)
       const travelDate = new Date(searchData.date);
       const dayOfWeek = travelDate.getDay();
       if (dayOfWeek === 5 || dayOfWeek === 6) {
-        // Friday/Saturday
-        finalPrice *= 1.12;
-        factors.push({ name: "Weekend", change: "+12%", type: "increase" });
+        // Friday/Saturday - Weekend travel
+        finalPrice *= 1.10;
+        factors.push({ name: "Weekend Travel", change: "+10%", type: "increase" });
       } else if (dayOfWeek === 0) {
-        // Sunday
-        finalPrice *= 1.05;
-        factors.push({ name: "Sunday", change: "+5%", type: "increase" });
+        // Sunday - Church/event traffic
+        finalPrice *= 1.08;
+        factors.push({ name: "Sunday Premium", change: "+8%", type: "increase" });
       }
       
-      // Factor 5: Advance Booking
+      // Factor 5: Advance Booking Incentive
       const today = new Date();
       const daysDifference = Math.ceil((travelDate.getTime() - today.getTime()) / (1000 * 3600 * 24));
-      if (daysDifference >= 7) {
-        finalPrice *= 0.88;
-        factors.push({ name: "Early Booking", change: "-12%", type: "decrease" });
-      } else if (daysDifference <= 1) {
-        finalPrice *= 1.15;
-        factors.push({ name: "Last Minute", change: "+15%", type: "increase" });
+      if (daysDifference >= 3) {
+        finalPrice *= 0.85;
+        factors.push({ name: "Early Booking", change: "-15%", type: "decrease" });
+      } else if (daysDifference <= 0) {
+        finalPrice *= 1.20;
+        factors.push({ name: "Same Day Booking", change: "+20%", type: "increase" });
       }
       
-      // Factor 6: Rating Premium
+      // Factor 6: Service Rating Premium
       if (busData.rating >= 4.5) {
         finalPrice *= 1.05;
-        factors.push({ name: "Premium Service", change: "+5%", type: "increase" });
+        factors.push({ name: "Premium Operator", change: "+5%", type: "increase" });
+      }
+      
+      // Factor 7: Route Distance/Traffic (Lagos Specific)
+      if (searchData.from === "lekki" || searchData.to === "lekki" || 
+          searchData.from === "victoria-island" || searchData.to === "victoria-island") {
+        finalPrice *= 1.12;
+        factors.push({ name: "Premium Route", change: "+12%", type: "increase" });
       }
       
       const roundedPrice = Math.round(finalPrice);
@@ -100,7 +110,7 @@ const PricePrediction = ({ basePrice, busData, searchData, onPriceCalculated }: 
   return (
     <div className="text-center">
       <div className="flex items-center justify-center space-x-2 mb-2">
-        <span className="text-white/60 line-through">₹{basePrice}</span>
+        <span className="text-white/60 line-through">₦{basePrice.toLocaleString()}</span>
         {priceDifference > 0 ? (
           <TrendingUp className="h-4 w-4 text-red-400" />
         ) : priceDifference < 0 ? (
@@ -110,10 +120,10 @@ const PricePrediction = ({ basePrice, busData, searchData, onPriceCalculated }: 
         )}
       </div>
       
-      <div className="text-2xl font-bold text-white">₹{predictedPrice}</div>
+      <div className="text-2xl font-bold text-white">₦{predictedPrice.toLocaleString()}</div>
       
-      <div className="text-sm text-blue-100 mb-3">
-        {priceDifference > 0 ? '+' : ''}₹{priceDifference} ({percentageChange > 0 ? '+' : ''}{percentageChange}%)
+      <div className="text-sm text-green-100 mb-3">
+        {priceDifference > 0 ? '+' : ''}₦{priceDifference.toLocaleString()} ({percentageChange > 0 ? '+' : ''}{percentageChange}%)
       </div>
       
       <div className="space-y-1">

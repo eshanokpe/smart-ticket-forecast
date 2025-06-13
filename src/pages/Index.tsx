@@ -24,42 +24,64 @@ const Index = () => {
   const [selectedSeats, setSelectedSeats] = useState([]);
   const [predictedPrice, setPredictedPrice] = useState(null);
 
+  // Lagos State cities and major destinations
+  const lagosStateCities = [
+    { value: "ikeja", label: "Ikeja" },
+    { value: "lagos-island", label: "Lagos Island" },
+    { value: "victoria-island", label: "Victoria Island" },
+    { value: "ikoyi", label: "Ikoyi" },
+    { value: "surulere", label: "Surulere" },
+    { value: "yaba", label: "Yaba" },
+    { value: "mushin", label: "Mushin" },
+    { value: "alaba", label: "Alaba" },
+    { value: "ajah", label: "Ajah" },
+    { value: "lekki", label: "Lekki" },
+    { value: "epe", label: "Epe" },
+    { value: "badagry", label: "Badagry" },
+    { value: "ikorodu", label: "Ikorodu" },
+    { value: "agege", label: "Agege" },
+    { value: "oshodi", label: "Oshodi" },
+    { value: "festac", label: "Festac Town" },
+    { value: "maryland", label: "Maryland" },
+    { value: "gbagada", label: "Gbagada" }
+  ];
+
   const buses = [
     {
       id: 1,
-      operator: "Premium Express",
+      operator: "BRT Lagos",
       departure: "06:00",
-      arrival: "14:30",
-      duration: "8h 30m",
-      type: "AC Sleeper",
-      basePrice: 1200,
+      arrival: "07:30",
+      duration: "1h 30m",
+      type: "AC Standard",
+      basePrice: 800,
       seatsAvailable: 15,
       rating: 4.5,
-      amenities: ["WiFi", "Charging Port", "Blanket", "Water"]
+      amenities: ["WiFi", "AC", "CCTV", "Comfortable Seats"]
     },
     {
       id: 2,
-      operator: "City Connect",
-      departure: "09:15",
-      arrival: "17:45",
-      duration: "8h 30m",
-      type: "AC Semi-Sleeper",
-      basePrice: 950,
+      operator: "Primero Transport",
+      departure: "08:15",
+      arrival: "10:00",
+      duration: "1h 45m",
+      type: "AC Premium",
+      basePrice: 1200,
       seatsAvailable: 8,
       rating: 4.2,
-      amenities: ["WiFi", "Charging Port", "Water"]
+      amenities: ["WiFi", "AC", "USB Charging", "Entertainment"]
     },
     {
       id: 3,
-      operator: "Night Rider",
-      departure: "22:30",
-      arrival: "06:00",
-      duration: "7h 30m",
-      type: "AC Sleeper",
-      basePrice: 1400,
+      operator: "Lagos Ride",
+      departure: "07:30",
+      arrival: "09:15",
+      duration: "1h 45m",
+      type: "Executive",
+      basePrice: 1500,
       seatsAvailable: 22,
       rating: 4.7,
-      amenities: ["WiFi", "Charging Port", "Blanket", "Meals", "Entertainment"]
+      amenities: ["WiFi", "AC", "Leather Seats", "Refreshments", "Entertainment"]
     }
   ];
 
@@ -82,7 +104,7 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-900 via-blue-800 to-teal-700">
+    <div className="min-h-screen bg-gradient-to-br from-green-900 via-green-800 to-emerald-700">
       {/* Header */}
       <div className="bg-white/10 backdrop-blur-sm border-b border-white/20">
         <div className="container mx-auto px-4 py-4">
@@ -91,8 +113,8 @@ const Index = () => {
               <Bus className="h-8 w-8 text-white" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-white">SmartBus</h1>
-              <p className="text-blue-100 text-sm">Intelligent Ticket Booking</p>
+              <h1 className="text-2xl font-bold text-white">Lagos SmartBus</h1>
+              <p className="text-green-100 text-sm">Intelligent Ticket Booking for Lagos State</p>
             </div>
           </div>
         </div>
@@ -107,7 +129,7 @@ const Index = () => {
                 key={step}
                 className={`flex items-center justify-center w-10 h-10 rounded-full ${
                   currentStep >= step
-                    ? "bg-white text-blue-900"
+                    ? "bg-white text-green-900"
                     : "bg-white/20 text-white/60"
                 } transition-all duration-300`}
               >
@@ -122,7 +144,7 @@ const Index = () => {
           <Card className="max-w-4xl mx-auto bg-white/10 backdrop-blur-sm border-white/20">
             <CardHeader>
               <CardTitle className="text-white text-center text-2xl">
-                Find Your Perfect Journey
+                Find Your Journey in Lagos State
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -131,14 +153,14 @@ const Index = () => {
                   <Label htmlFor="from" className="text-white">From</Label>
                   <Select onValueChange={(value) => setSearchData({...searchData, from: value})}>
                     <SelectTrigger className="bg-white/10 border-white/20 text-white">
-                      <SelectValue placeholder="Select city" />
+                      <SelectValue placeholder="Select location" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="mumbai">Mumbai</SelectItem>
-                      <SelectItem value="delhi">Delhi</SelectItem>
-                      <SelectItem value="bangalore">Bangalore</SelectItem>
-                      <SelectItem value="pune">Pune</SelectItem>
-                      <SelectItem value="hyderabad">Hyderabad</SelectItem>
+                      {lagosStateCities.map((city) => (
+                        <SelectItem key={city.value} value={city.value}>
+                          {city.label}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
@@ -147,14 +169,14 @@ const Index = () => {
                   <Label htmlFor="to" className="text-white">To</Label>
                   <Select onValueChange={(value) => setSearchData({...searchData, to: value})}>
                     <SelectTrigger className="bg-white/10 border-white/20 text-white">
-                      <SelectValue placeholder="Select city" />
+                      <SelectValue placeholder="Select destination" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="mumbai">Mumbai</SelectItem>
-                      <SelectItem value="delhi">Delhi</SelectItem>
-                      <SelectItem value="bangalore">Bangalore</SelectItem>
-                      <SelectItem value="pune">Pune</SelectItem>
-                      <SelectItem value="hyderabad">Hyderabad</SelectItem>
+                      {lagosStateCities.map((city) => (
+                        <SelectItem key={city.value} value={city.value}>
+                          {city.label}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
@@ -187,7 +209,7 @@ const Index = () => {
               
               <Button 
                 onClick={handleSearch}
-                className="w-full bg-white text-blue-900 hover:bg-blue-50 text-lg py-6"
+                className="w-full bg-white text-green-900 hover:bg-green-50 text-lg py-6"
                 disabled={!searchData.from || !searchData.to || !searchData.date}
               >
                 <Ticket className="mr-2 h-5 w-5" />
@@ -202,9 +224,9 @@ const Index = () => {
           <div className="max-w-6xl mx-auto">
             <div className="mb-6">
               <h2 className="text-2xl font-bold text-white mb-2">
-                {searchData.from} → {searchData.to}
+                {lagosStateCities.find(c => c.value === searchData.from)?.label} → {lagosStateCities.find(c => c.value === searchData.to)?.label}
               </h2>
-              <p className="text-blue-100">
+              <p className="text-green-100">
                 {new Date(searchData.date).toLocaleDateString()} • {searchData.passengers} passenger(s)
               </p>
             </div>
@@ -216,7 +238,7 @@ const Index = () => {
                     <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 items-center">
                       <div>
                         <h3 className="text-white font-semibold text-lg">{bus.operator}</h3>
-                        <p className="text-blue-100">{bus.type}</p>
+                        <p className="text-green-100">{bus.type}</p>
                         <div className="flex items-center mt-1">
                           <span className="text-yellow-400">★</span>
                           <span className="text-white ml-1">{bus.rating}</span>
@@ -227,17 +249,17 @@ const Index = () => {
                         <div className="flex items-center justify-center space-x-4">
                           <div>
                             <p className="text-white font-semibold">{bus.departure}</p>
-                            <p className="text-blue-100 text-sm">{searchData.from}</p>
+                            <p className="text-green-100 text-sm">{lagosStateCities.find(c => c.value === searchData.from)?.label}</p>
                           </div>
                           <div className="flex-1 border-t border-white/30 relative">
-                            <Bus className="absolute -top-2 left-1/2 transform -translate-x-1/2 h-4 w-4 text-white bg-blue-800 rounded-full p-1" />
+                            <Bus className="absolute -top-2 left-1/2 transform -translate-x-1/2 h-4 w-4 text-white bg-green-800 rounded-full p-1" />
                           </div>
                           <div>
                             <p className="text-white font-semibold">{bus.arrival}</p>
-                            <p className="text-blue-100 text-sm">{searchData.to}</p>
+                            <p className="text-green-100 text-sm">{lagosStateCities.find(c => c.value === searchData.to)?.label}</p>
                           </div>
                         </div>
-                        <p className="text-blue-100 text-sm mt-2">{bus.duration}</p>
+                        <p className="text-green-100 text-sm mt-2">{bus.duration}</p>
                       </div>
                       
                       <div>
@@ -248,7 +270,7 @@ const Index = () => {
                             </Badge>
                           ))}
                         </div>
-                        <p className="text-blue-100">
+                        <p className="text-green-100">
                           <Users className="inline h-4 w-4 mr-1" />
                           {bus.seatsAvailable} seats available
                         </p>
@@ -263,7 +285,7 @@ const Index = () => {
                         />
                         <Button 
                           onClick={() => handleBusSelect(bus)}
-                          className="bg-white text-blue-900 hover:bg-blue-50 mt-3"
+                          className="bg-white text-green-900 hover:bg-green-50 mt-3"
                         >
                           Select Seats
                         </Button>
