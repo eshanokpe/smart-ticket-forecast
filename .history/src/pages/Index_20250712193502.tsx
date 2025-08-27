@@ -114,8 +114,7 @@ const Index = () => {
             </div>
             <div>
               <h1 className="text-2xl font-bold text-white">Lagos SmartBus</h1>
-              <p className="text-green-100 text-sm">AN INTELLIGENT BUS TICKET BOOKING SYSTEM WITH PRICE
-PREDICTION USING DECISION TREES ALGORITHM</p>
+              <p className="text-green-100 text-sm">Intelligent Ticket Booking for Lagos State</p>
             </div>
           </div>
         </div>

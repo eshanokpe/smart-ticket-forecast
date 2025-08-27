@@ -175,7 +175,7 @@ const SeatSelection = ({ bus, passengers, onSeatsSelected }: SeatSelectionProps)
               <div className="border-t border-white/20 pt-4">
                 <div className="flex justify-between text-white font-semibold text-lg">
                   <span>Total:</span>
-                  <span>₦{getTotalPrice().toLocaleString()}</span>
+                  <span>₹{getTotalPrice().toLocaleString()}</span>
                 </div>
               </div>
             </div>
