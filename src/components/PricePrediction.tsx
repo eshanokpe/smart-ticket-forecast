@@ -1,7 +1,7 @@
-
 import { useState, useEffect } from "react";
-import { TrendingUp, TrendingDown, Minus } from "lucide-react";
+import { TrendingUp, TrendingDown, Minus, Info } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface PricePredictionProps {
   basePrice: number;
@@ -109,42 +109,72 @@ const PricePrediction = ({ basePrice, busData, searchData, onPriceCalculated }: 
 
   return (
     <div className="text-center">
-      <div className="flex items-center justify-center space-x-2 mb-2">
-        <span className="text-white/60 line-through">₦{basePrice.toLocaleString()}</span>
+      <div className="flex items-center justify-center space-x-2 mb-1">
+        <span className="text-slate-500 text-sm line-through">₦{basePrice.toLocaleString()}</span>
         {priceDifference > 0 ? (
-          <TrendingUp className="h-4 w-4 text-red-400" />
+          <TrendingUp className="h-4 w-4 text-red-500" />
         ) : priceDifference < 0 ? (
-          <TrendingDown className="h-4 w-4 text-green-400" />
+          <TrendingDown className="h-4 w-4 text-green-500" />
         ) : (
-          <Minus className="h-4 w-4 text-white" />
+          <Minus className="h-4 w-4 text-slate-400" />
         )}
       </div>
       
-      <div className="text-2xl font-bold text-white">₦{predictedPrice.toLocaleString()}</div>
+      <div className="text-2xl font-bold text-slate-800">₦{predictedPrice.toLocaleString()}</div>
       
-      <div className="text-sm text-green-100 mb-3">
-        {priceDifference > 0 ? '+' : ''}₦{priceDifference.toLocaleString()} ({percentageChange > 0 ? '+' : ''}{percentageChange}%)
+      <div className={`text-sm font-medium mb-3 ${priceDifference > 0 ? 'text-red-500' : priceDifference < 0 ? 'text-green-500' : 'text-slate-500'}`}>
+        {priceDifference > 0 ? '+' : ''}₦{Math.abs(priceDifference).toLocaleString()} ({percentageChange > 0 ? '+' : ''}{percentageChange}%)
       </div>
       
-      <div className="space-y-1">
-        {priceFactors.slice(0, 3).map((factor, index) => (
-          <Badge 
-            key={index}
-            variant="secondary" 
-            className={`text-xs ${
-              factor.type === 'increase' 
-                ? 'bg-red-500/20 text-red-200' 
-                : 'bg-green-500/20 text-green-200'
-            }`}
-          >
-            {factor.name} {factor.change}
-          </Badge>
-        ))}
-        {priceFactors.length > 3 && (
-          <Badge variant="secondary" className="bg-white/20 text-white text-xs">
-            +{priceFactors.length - 3} more factors
-          </Badge>
-        )}
+      <TooltipProvider>
+        <div className="flex flex-wrap justify-center gap-1 mb-2">
+          {priceFactors.slice(0, 3).map((factor, index) => (
+            <Tooltip key={index}>
+              <TooltipTrigger asChild>
+                <Badge 
+                  variant="secondary" 
+                  className={`text-xs cursor-help ${
+                    factor.type === 'increase' 
+                      ? 'bg-red-100 text-red-700 hover:bg-red-200' 
+                      : 'bg-green-100 text-green-700 hover:bg-green-200'
+                  }`}
+                >
+                  {factor.name}
+                </Badge>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p className="text-xs">{factor.name}: {factor.change}</p>
+              </TooltipContent>
+            </Tooltip>
+          ))}
+          {priceFactors.length > 3 && (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Badge variant="outline" className="bg-slate-100 text-slate-600 text-xs cursor-help">
+                  +{priceFactors.length - 3} more
+                  <Info className="h-3 w-3 ml-1" />
+                </Badge>
+              </TooltipTrigger>
+              <TooltipContent className="max-w-xs">
+                <p className="text-xs font-medium mb-1">All price factors:</p>
+                <div className="space-y-1">
+                  {priceFactors.map((factor, index) => (
+                    <div key={index} className="flex justify-between">
+                      <span className="text-xs">{factor.name}</span>
+                      <span className={`text-xs ${factor.type === 'increase' ? 'text-red-500' : 'text-green-500'}`}>
+                        {factor.change}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </TooltipContent>
+            </Tooltip>
+          )}
+        </div>
+      </TooltipProvider>
+      
+      <div className="text-xs text-slate-500 mt-1">
+        AI-powered price prediction
       </div>
     </div>
   );
