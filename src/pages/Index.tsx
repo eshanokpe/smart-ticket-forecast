@@ -117,7 +117,7 @@ const Index = () => {
         setSelectedSeats([]);
       }
       if (step < 3) {
-        setSelectedBus(null);
+        setSelectedBus(null);  
       }
     }
   };
